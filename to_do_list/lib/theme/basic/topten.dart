@@ -15,6 +15,7 @@ class ToptenList extends StatefulWidget {
 class MenuListState extends State<ToptenList> {
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   List<String> listComponent = [];
+  var a = 3;
   Future<void> _loadData() async {
     final SharedPreferences prefs = await _prefs;
     setState(() {
@@ -88,30 +89,42 @@ class MenuListState extends State<ToptenList> {
                     child: Text("No schedule",
                         style: TextStyle(fontSize: 20, color: Colors.grey)),
                   )
-                : ListView.builder(
-                    // listview가있네
-                    shrinkWrap: true,
-                    itemCount: listComponent
-                        .length, // 일단 100으로 해놓고 수정해야함 -> 대규모 업데이트가 필요할 때 ㅇㅇ
-                    itemBuilder: (BuildContext context, int index) {
-                      return menuComponent(
-                          context,
-                          listComponent[index],
-                          deleteButton(index, () async {
-                            final SharedPreferences prefs = await _prefs;
-                            setState(() {
-                              listComponent.removeAt(index);
-                              prefs.setStringList(
-                                  "listComponent", listComponent);
-                            });
-                          }));
-                    }),
+                : Expanded(
+                    child: ListView.builder(
+                        // listview가있네
+                        shrinkWrap: true,
+                        itemCount: listComponent.length <= 4
+                            ? listComponent.length
+                            : 4, // listComponent.length는 존재해야해서 2를 넣을 수 있는 동시에 존재도 가능한 기능 == 삼항연산자.
+                        itemBuilder: (BuildContext context, int index) {
+                          return menuComponent(
+                              context,
+                              listComponent[index],
+                              deleteButton(index, () async {
+                                final SharedPreferences prefs = await _prefs;
+                                setState(() {
+                                  listComponent.removeAt(index);
+                                  prefs.setStringList(
+                                      "listComponent", listComponent);
+                                });
+                              }),
+                              index);
+                        }),
+                  )
           ],
         ));
   }
 }
 
-Widget menuComponent(BuildContext context, content, Widget deleteButton) {
+List<String> lst = [
+  'camera.jpg',
+  'balcony.jpg',
+  'rain.webp',
+  'land.jpg',
+];
+
+Widget menuComponent(
+    BuildContext context, content, Widget deleteButton, int index) {
   List listContent = jsonDecode(content);
 
   return Padding(
@@ -137,7 +150,7 @@ Widget menuComponent(BuildContext context, content, Widget deleteButton) {
                   width: double.infinity,
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 196, 170, 238),
+                    color: Color.fromARGB(255, 206, 185, 240),
                     border: Border.all(
                         color: Color.fromARGB(255, 188, 141, 214), width: 1.5),
                     borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -145,7 +158,10 @@ Widget menuComponent(BuildContext context, content, Widget deleteButton) {
                   child: Row(
                     children: [
                       Image.asset(
-                          'assets/rain.webp'), // padding 조절 시 크기 알아서 조절 됨.
+                        lst[index],
+                        width: 150,
+                        height: 150,
+                      ), // padding 조절 시 크기 알아서 조절 됨.
                       const SizedBox(width: 10),
                       Container(
                           width: 190,
@@ -155,7 +171,8 @@ Widget menuComponent(BuildContext context, content, Widget deleteButton) {
                               Text(
                                 listContent[0],
                                 style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
                               ),
                               const SizedBox(width: 10),
                               Flexible(

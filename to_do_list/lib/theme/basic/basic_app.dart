@@ -24,7 +24,7 @@ class BasicAppState extends State<BasicApp> {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 210, 241, 225),
       appBar: AppBar(
-        title: const Text('COCO Comunity',
+        title: const Text('Vote For Reboot',
             textAlign: TextAlign.left,
             style: TextStyle(
                 color: Color.fromARGB(255, 58, 132, 1),
@@ -59,7 +59,7 @@ class BasicAppState extends State<BasicApp> {
         items: const [
           // 바텀 바 순서만 바꾸는거임.
           BottomNavigationBarItem(
-            icon: Icon(Icons.summarize_outlined),
+            icon: Icon(Icons.ten_mp_outlined),
             label: 'top_10',
           ),
           BottomNavigationBarItem(
