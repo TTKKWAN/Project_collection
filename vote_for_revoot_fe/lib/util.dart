@@ -1,12 +1,13 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
-// import 'package:flutter/material.dart';
-// import 'dart:convert';
-// import 'package:image_picker/image_picker.dart';
-// import 'dart:io';
-// import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:flutter/cupertino.dart';
-// import 'package:provider/provider.dart';
-// import 'util.dart';
+import 'dart:convert';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
+import 'text.dart';
 
 List<String> lst = [
   'camera.jpg',
@@ -14,25 +15,6 @@ List<String> lst = [
   'rain.webp',
   'desk.jpg',
 ];
-
-Widget viewToDoDialog(BuildContext context, List content) {
-  return AlertDialog(
-    title: Text(content[0]),
-    content: Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [Text(content[1])],
-    ),
-    actions: [
-      TextButton(
-        onPressed: () {
-          Navigator.pop(context);
-        },
-        child: const Text("Close"),
-      )
-    ],
-  );
-}
 
 Widget menuComponent(BuildContext context, content, int index) {
   // 게시물의 구성요소
@@ -57,8 +39,9 @@ Widget menuComponent(BuildContext context, content, int index) {
             children: [
               Container(
                   //child: Text('Location'),
-                  height: MediaQuery.of(context).size.width * 3 / 10 + 10,
+                  // height: MediaQuery.of(context).size.width * 3 / 10 + 10, // 가로
                   width: double.infinity,
+                  height: MediaQuery.of(context).size.width * 5 / 14,
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: Color.fromARGB(255, 232, 249, 233),
@@ -66,50 +49,59 @@ Widget menuComponent(BuildContext context, content, int index) {
                         color: Color.fromARGB(255, 181, 244, 187), width: 1.5),
                     borderRadius: const BorderRadius.all(Radius.circular(10)),
                   ),
-                  child: Row(
-                    children: [
-                      // Image.asset(
-                      //     'assets/tramp.jpg'), // padding 조절 시 크기 알아서 조절 됨.
-                      Image.asset(
-                        lst[index % 4],
-                        width: MediaQuery.of(context).size.width * 3 / 10, // 여기
-                        height: MediaQuery.of(context).size.width * 3 / 10,
-                      ),
-                      const SizedBox(width: 10),
-                      Container(
-                          width:
-                              MediaQuery.of(context).size.width * 1 / 2, // 여기
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                content[0], ///////// 여기가 제목
-                                style: const TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(width: 10),
-                              Flexible(
-                                  child: RichText(
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 3,
-                                strutStyle: StrutStyle(fontSize: 16.0),
-                                text: TextSpan(
-                                    text: content[1], /////////// 여기가 본문
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        height: 1.4,
-                                        fontSize: 16.0,
-                                        fontFamily: 'NanumSquareRegular')),
-                              )),
-                            ],
-                          )),
-                      const Spacer(),
-                      deleteButton(),
-                    ],
-                  )),
+                  child: my_body(index: index, content: listcontent)),
             ],
           )));
+}
+
+class my_body extends StatelessWidget {
+  const my_body({Key? key, this.index, this.content}) : super(key: key);
+
+  final index;
+  final content;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        // Image.asset(
+        //     'assets/tramp.jpg'), // padding 조절 시 크기 알아서 조절 됨.
+        // Image.asset(
+        // lst[index % 4],
+        Image.asset(
+          'assets/tramp.jpg',
+          width: MediaQuery.of(context).size.width * 3 / 10, // 여기 텍스트 부분 가로
+          height: MediaQuery.of(context).size.width * 3 / 10,
+        ),
+        const SizedBox(width: 10),
+        Container(
+            width: MediaQuery.of(context).size.width * 1 / 2, // 여기
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  content[0], ///////// 여기가 제목
+                  style: const TextStyle(
+                      color: Colors.black, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(width: 10),
+                Flexible(
+                    child: RichText(
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 3,
+                  text: TextSpan(
+                      text: content[1], /////////// 여기가 본문
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: 'NanumSquareRegular')),
+                )),
+                deleteButton(),
+              ],
+            )),
+        // const Spacer(),
+      ],
+    );
+  }
 }
 
 class deleteButton extends StatelessWidget {
@@ -124,4 +116,23 @@ class deleteButton extends StatelessWidget {
           color: Colors.black,
         ));
   }
+}
+
+Widget viewToDoDialog(BuildContext context, List content) {
+  return AlertDialog(
+    title: Text(content[0]),
+    content: Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [Text(content[1])],
+    ),
+    actions: [
+      TextButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        child: const Text("Close"),
+      )
+    ],
+  );
 }

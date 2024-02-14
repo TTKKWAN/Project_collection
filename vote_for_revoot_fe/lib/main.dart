@@ -1,20 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
-import 'util.dart';
 import 'text.dart';
-
-List<String> lst = [
-  'camera.jpg',
-  'balcony.jpg',
-  'rain.webp',
-  'desk.jpg',
-];
+import 'util.dart';
 
 void main() {
   runApp(MaterialApp(home: MyApp()));
@@ -87,3 +79,5 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+
+///////////////////////////////여기서부터 다른파일로 들어가야 할 부분 //////////////////////////////////////////////////
