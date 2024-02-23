@@ -104,37 +104,12 @@ class _SignInState extends State<SignIn> {
                 //로그인 버튼, 회원가입으로 이동 텍스트, sizedbox는 그냥 정렬을 위한 것
                 Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    ElevatedButton(onPressed: (){
-                      context.read<UserStore>().getData_users();
-                      context.read<UserStore>().getData_communities();
-  }, child: Text('Submit')),
                     ElevatedButton(child: Text('Sign In'), onPressed: () {
                       //getCommunityCheck();
-                      membercheck = true;
-
-                          // context.read<UserStore>().isMember(loginemail.toString(), loginpw.toString(),nickname.toString(), userlevel.toString());
+                      membercheck = context.read<UserStore>().isMember(loginemail.text, loginpw.text,nickname.text, userlevel.text);
                       if (membercheck) {
                         Navigator.push(context, MaterialPageRoute(
                             builder: (c) => MyApp()));
-                      } else {
-                        if (context
-                            .read<UserStore>()
-                            .users[context
-                            .read<UserStore>()
-                            .users
-                            .length]['userLevel'] == 'MEMBER') {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (c) => gradeMember()));
-                        } else if (context
-                            .read<UserStore>()
-                            .users[context
-                            .read<UserStore>()
-                            .users
-                            .length]['userLevel'] == 'MANAGER') {
-                          Navigator.push(context,
-                              MaterialPageRoute(
-                                  builder: (c) => gradeManager()));
-                        }
                       }
                     }),
                     GestureDetector(child: Text('Sign up'),
@@ -178,28 +153,24 @@ class UserStore extends ChangeNotifier {
     notifyListeners();
   }
 
-  isMember(id, pw, nickname, level){
-    // 맞으면 메인페이지로 이동, 틀리면 오류메세지
-
+  isMember(id, pw, nickname, level) {
     bool check = false;
-    bool idcheck = false;
-    bool pwcheck = false;
-    bool nicknamecheck = false;
-    bool levelcheck = false;
 
-    for(var user in users){
-      idcheck = user['email'].contains(id);
-      pwcheck = user['password'].contains(pw);
-      nicknamecheck = user['nickname'].contains(nickname);
-      levelcheck = user['userLevel'].contains(level);
-      if(idcheck == true && pwcheck == true && nicknamecheck == true && levelcheck == true ){
-        mypageid = user['userid'];
+    for (var user in users) {
+      print(user);
+      if (user["email"] == id &&
+          user["password"] == pw &&
+          user["nickname"] == nickname &&
+          user["userLevel"] == level) {
         check = true;
+        break; // 모든 필드가 일치하는 사용자를 찾았으므로 더 이상 검색할 필요 없음
       }
     }
+
     notifyListeners();
     return check;
   }
+
 
   //회원가입 시 닉네임, 이메일, 비밀번호 저장하는 함수
   addUser(name, email, pw, level){
