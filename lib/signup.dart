@@ -74,7 +74,7 @@ class _SignUpState extends State<SignUp> {
               child: TextField(
                 controller: nicknameText,
                 decoration: InputDecoration(
-                    labelText: 'Nick Name',
+                    labelText: 'Nickname',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),)
                 ),
@@ -86,7 +86,7 @@ class _SignUpState extends State<SignUp> {
                 controller: emailText,
                 decoration: InputDecoration(
 
-                    labelText: 'email',
+                    labelText: 'Email',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),)
                 ),

@@ -1,15 +1,14 @@
-
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'main.dart';
-import 'mypage.dart';
-import 'package:http/http.dart' as http;
-import 'community.dart';
 import 'signup.dart';
+import 'package:http/http.dart' as http;
+import 'mypage.dart';
+import 'community.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -58,31 +57,21 @@ class _SignInState extends State<SignIn> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                  //nickname
+                  child: TextField(
+                    controller: nickname,
+                    decoration: InputDecoration(
+                        labelText: 'Nickname',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),)
+                    ),
+                  ),),
+                Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
                   //이메일
                   child: TextField(
                     controller: loginemail,
                     decoration: InputDecoration(
                       labelText: 'Email',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),)
-                    ),
-                  ),),
-                Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                  //nickname
-                  child: TextField(
-                    controller: nickname,
-                    decoration: InputDecoration(
-                        labelText: 'nickname',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),)
-                    ),
-                  ),),
-                Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                  //멤버 레벨
-                  child: TextField(
-                    controller: userlevel,
-                    decoration: InputDecoration(
-                        labelText: 'MEMBER or MANAGER',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),)
                     ),
@@ -94,6 +83,16 @@ class _SignInState extends State<SignIn> {
                     obscureText: true,
                     decoration: InputDecoration(
                         labelText: 'Password',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),)
+                    ),
+                  ),),
+                Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                  //멤버 레벨
+                  child: TextField(
+                    controller: userlevel,
+                    decoration: InputDecoration(
+                        labelText: 'MEMBER or MANAGER',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),)
                     ),
@@ -110,7 +109,7 @@ class _SignInState extends State<SignIn> {
                       }else{
                         showDialog(context: context, builder: (context) {
                           return AlertDialog(
-                            title: Text('sign in error'),
+                            title: Text('Sign in Error', style: TextStyle(color: Colors.red),),
                             actions: [
                               TextButton(onPressed: (){
                                 Navigator.pop(context);
@@ -144,6 +143,7 @@ class UserStore extends ChangeNotifier {
   Future<void> getData_users() async{
     var url = Uri.parse('http://10.0.2.2:8080/auth/alluser');
     final response = await http.get(url);
+
     var result2 = jsonDecode(response.body);
     users = result2;
     //print(users);

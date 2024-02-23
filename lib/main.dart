@@ -14,7 +14,8 @@ import 'mypage.dart';
 //https://server-irxa6nl5aa-uc.a.run.app/
 
 void main() {
-  runApp(ChangeNotifierProvider(create: (_) => UserStore(), child: MaterialApp(home: SignIn()),)
+  runApp(ChangeNotifierProvider(create: (_) => UserStore(), child: MaterialApp(home: MyApp()),)
+      //home: SignIn()
       );
 }
 
@@ -80,7 +81,11 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   var tab = 1;
-  var data = [];
+  var data = [{"title": "title1",
+    "content": "content1",
+    "location": "anam",
+    "photos": ["photo1"],
+    "sjdskl": "sdjlk"}];
   var userImage;
   var userContent = ['0', '0'];
   var newlike = 0;
@@ -97,31 +102,15 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  //저 URL에서 데이터 get하고 result에 저장, 그걸 json형식으로 decode해서 result2에 저장, data에 result2 저장.
-  //예시 url에서 data가져오는 코드인데 참고만 해야할듯
-  Future<void> getData() async {
-    final token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuaWNrbmFtZSI6InNlYmluIiwiaWF0IjoxNzA4NTI5OTI2LCJleHAiOjE3MDg1NDc5MjZ9.0CE4nDRBMEeGSTOHNzbuYEchrZs7PrwbFvcOQQL1WQY";
+    Future<void> getData() async {
+    var url = Uri.parse('http://10.0.2.2:8080/boards/');
+    final response = await http.get(url);
 
-    var url = Uri.parse('https://server-irxa6nl5aa-uc.a.run.app/boards/');
-    var subdata;
-    try {
-      var response = await http.get(
-          url,
-          headers: <String, String>{
-            'Authorization': 'Bearer $token',
-        },
-      );
-      if (response.statusCode == 200) {
-        subdata = jsonDecode(response.body);
-        print('getData success');
-      }
-      setState(() {
-        data = subdata;
-      });
-    } catch (e) {
-      print('error');
+    var result2 = jsonDecode(response.body);
+    setState(() {
+      data = result2;
+    });
     }
-  }
 
 
   //새로운 board 만드는 함수,

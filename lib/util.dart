@@ -47,21 +47,22 @@ class _menuComponentState extends State<menuComponent> {
       },
       child: Row(
         children: [
-          widget.data['photos'].runtimeType == String
-              ? Image.network(
-                  widget.data['photos'],
-                  width: MediaQuery.of(context).size.width *
-                      3 /
-                      10, // 여기 텍스트 부분 가로
-                  height: MediaQuery.of(context).size.width * 3 / 10,
-                )
-              : Image.file(
-                  widget.data['photos'],
-                  width: MediaQuery.of(context).size.width *
-                      3 /
-                      10, // 여기 텍스트 부분 가로
-                  height: MediaQuery.of(context).size.width * 3 / 10,
-                ),
+          // widget.data['photos'].runtimeType == String
+          //     ? Image.network(
+          //         widget.data['photos'],
+          //         width: MediaQuery.of(context).size.width *
+          //             3 /
+          //             10, // 여기 텍스트 부분 가로
+          //         height: MediaQuery.of(context).size.width * 3 / 10,
+          //       )
+          //     : Image.file(
+          //         widget.data['photos'],
+          //         width: MediaQuery.of(context).size.width *
+          //             3 /
+          //             10, // 여기 텍스트 부분 가로
+          //         height: MediaQuery.of(context).size.width * 3 / 10,
+          //       ),
+
           const SizedBox(width: 10),
           Container(
               width: MediaQuery.of(context).size.width * 1 / 2, // 여기
@@ -73,6 +74,7 @@ class _menuComponentState extends State<menuComponent> {
                     style: const TextStyle(
                         color: Colors.black, fontWeight: FontWeight.bold),
                   ),
+
                   const SizedBox(width: 10),
                   Container(
                       child: Row(children: [
