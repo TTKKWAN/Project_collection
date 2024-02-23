@@ -3,14 +3,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'main.dart';
-import 'Login.dart';
-import 'package:tttoy/Login.dart';
+import 'signin.dart';
+import 'package:tttoy/signin.dart';
 import 'util.dart';
 
-class Mypage extends StatelessWidget {
-  Mypage({super.key, this.data});
+class Mypage extends StatefulWidget {
+  Mypage({super.key, this.data, this.removedata});
   final data;
+  final removedata;
 
+  @override
+  State<Mypage> createState() => _MypageState();
+}
+
+class _MypageState extends State<Mypage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,13 +63,19 @@ class Mypage extends StatelessWidget {
               //Store1 data에 있는 nickname으로 구분해서 게시물 가져옴
               Expanded(
                 child: ListView.builder(
-                    itemCount: data.length,
+                    itemCount: widget.data.length,
                     itemBuilder: (c, i) {
                       return GestureDetector(
                         child: ListTile(
                           leading: Icon(Icons.location_city),
                           title: Text('my activity'),
-                          trailing: Text(data[i]['hearts'].toString()),
+                          trailing: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  widget.removedata(i);
+                                });
+                              },
+                              icon: Icon(Icons.delete)),
                         ),
                         onTap: (){
                           Navigator.push(context,

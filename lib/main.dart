@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
-import 'text.dart';
 import 'util.dart';
 import 'package:http/http.dart' as http;
-import 'Login.dart';
+import 'signin.dart';
 import 'Topten.dart';
 import 'main_app_bar.dart';
 import 'mypage.dart';
@@ -16,14 +14,14 @@ import 'mypage.dart';
 //https://server-irxa6nl5aa-uc.a.run.app/
 
 void main() {
-  runApp(MaterialApp(home: SignIn()));
+  runApp(ChangeNotifierProvider(create: (_) => UserStore(), child: MaterialApp(home: SignIn()),)
+      );
 }
 
 class Home extends StatefulWidget {
-  Home({Key? key, this.data, this.addData, this.removedata}) : super(key: key);
+  Home({Key? key, this.data, this.removedata}) : super(key: key);
 
   final data;
-  final addData;
   final removedata;
 
   @override
@@ -99,42 +97,104 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-  getData() async {
-    var result = await http
-        .get(Uri.parse('https://codingapple1.github.io/app/data.json'));
-    var result2 = (jsonDecode(result.body));
+  //저 URL에서 데이터 get하고 result에 저장, 그걸 json형식으로 decode해서 result2에 저장, data에 result2 저장.
+  //예시 url에서 data가져오는 코드인데 참고만 해야할듯
+  Future<void> getData() async {
+    final token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuaWNrbmFtZSI6InNlYmluIiwiaWF0IjoxNzA4NTI5OTI2LCJleHAiOjE3MDg1NDc5MjZ9.0CE4nDRBMEeGSTOHNzbuYEchrZs7PrwbFvcOQQL1WQY";
 
-    setState(() {
-      data = result2;
-      // print(data[1]);
-    });
+    var url = Uri.parse('https://server-irxa6nl5aa-uc.a.run.app/boards/');
+    var subdata;
+    try {
+      var response = await http.get(
+          url,
+          headers: <String, String>{
+            'Authorization': 'Bearer $token',
+        },
+      );
+      if (response.statusCode == 200) {
+        subdata = jsonDecode(response.body);
+        print('getData success');
+      }
+      setState(() {
+        data = subdata;
+      });
+    } catch (e) {
+      print('error');
+    }
   }
 
-  addMyData() {
+
+  //새로운 board 만드는 함수,
+  Future<void> addMyData() async {
+    final token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuaWNrbmFtZSI6InNlYmluIiwiaWF0IjoxNzA4NTM3NTIzLCJleHAiOjE3MDg1NTU1MjN9.JZxRCrKXWci_iWFKNnJ_k6Myp1vtMQfUS7j5_wYT-dA";
+    var url = Uri.parse('https://server-irxa6nl5aa-uc.a.run.app/boards/');
+
     var myData = {
-      'boardId': data.length,
-      'photos': userImage,
-      'hearts': newlike,
-      'date': 'july 25',
-      'content': userContent[1],
-      'title': userContent[0]
+
+        "title": "title1",
+        "content": "content1",
+        "location": "anam",
+        "photos": ["photo1"]
+
+
+
+      // 'title': userContent[0],
+      // 'content': userContent[1],
+      // 'location': "anam",
+      // 'photos': userImage,
+      // 'hearts': newlike,
     };
+
+    try {
+      var response = await http.post(
+        url,
+        headers: <String, String>{
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode((myData))
+      );
+      if (response.statusCode == 200) {
+        print('addMyDataSuccess');
+      } else {
+        print("fail");
+      }
+    } catch (e) {
+      print('addMyDataError');
+    }
+
     setState(() {
       data.insert(0, myData);
     });
   }
 
-  removedata(a) {
-    setState(() {
-      data.remove(data[a]);
-    });
+  Future<void> removedata(boardIdd) async {
+    final token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuaWNrbmFtZSI6InNlYmluIiwiaWF0IjoxNzA4NTI5OTI2LCJleHAiOjE3MDg1NDc5MjZ9.0CE4nDRBMEeGSTOHNzbuYEchrZs7PrwbFvcOQQL1WQY";
+    final boardId = boardIdd;
+    final url = Uri.parse(
+        'https://server-irxa6nl5aa-uc.a.run.app/boards/$boardId');
+
+    try {
+      final response = await http.delete(
+        url,
+        headers: <String, String>{
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        print('Board with ID $boardId deleted successfully.');
+      } else {
+        print('Failed to delete board. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+
+    getData();
   }
 
-  addData(a) {
-    setState(() {
-      data.add(a);
-    });
-  }
+
+
 
   void initState() {
     super.initState();
@@ -177,21 +237,22 @@ class _MyAppState extends State<MyApp> {
           ? const Padding(
               padding: EdgeInsets.only(top: 200),
               child:
-                  Text(" ", style: TextStyle(fontSize: 20, color: Colors.grey)),
+                  Text("hello", style: TextStyle(fontSize: 20, color: Colors.grey)),
             ) //
           : [
               Topten(
                 data: data,
-                addData: addData,
+                //addData: addData,
                 removedata: removedata,
               ),
               Home(
                 data: data,
-                addData: addData,
+                //addData: addData,
                 removedata: removedata,
               ),
         ChangeNotifierProvider(create: (c) => UserStore(), child: Mypage(
-          data: data
+            removedata: removedata,
+            data: data
         ),)
             ][tab],
       bottomNavigationBar: BottomNavigationBar(
