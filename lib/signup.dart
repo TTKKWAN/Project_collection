@@ -123,7 +123,7 @@ class _SignUpState extends State<SignUp> {
                   //context.read<UserStore>().addUser(nicknameText.text, emailText.text, passwordText.text, userLevelText.text);
                   //context.watch<UserStore>().mypageid = context.watch<UserStore>().users.length;
 
-                  //Navigator.push(context, MaterialPageRoute(builder: (c) => SignIn()));
+                  Navigator.push(context, MaterialPageRoute(builder: (c) => SignIn()));
                 })
           ],
         ),

@@ -107,6 +107,17 @@ class _SignInState extends State<SignIn> {
                       if (membercheck) {
                         Navigator.push(context, MaterialPageRoute(
                             builder: (c) => MyApp()));
+                      }else{
+                        showDialog(context: context, builder: (context) {
+                          return AlertDialog(
+                            title: Text('sign in error'),
+                            actions: [
+                              TextButton(onPressed: (){
+                                Navigator.pop(context);
+                              }, child: Text('ok'))
+                            ],
+                          );
+                        },);
                       }
                     }),
                     GestureDetector(child: Text('Sign up'),
@@ -135,7 +146,7 @@ class UserStore extends ChangeNotifier {
     final response = await http.get(url);
     var result2 = jsonDecode(response.body);
     users = result2;
-    print(users);
+    //print(users);
 
     notifyListeners();
   }
@@ -151,7 +162,6 @@ class UserStore extends ChangeNotifier {
     bool check = false;
 
     for (var user in users) {
-      print(user);
       if (user["email"] == id &&
           user["password"] == pw &&
           user["nickname"] == nickname &&
