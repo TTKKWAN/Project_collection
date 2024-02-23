@@ -28,18 +28,24 @@ class _SignUpState extends State<SignUp> {
 
 
   Future<void> signUp() async{
-    Map<String, dynamic> body = {
-      "nickname":"sebin",
-      "email":"sebinemail",
-      "password":"expw",
-      "userLevel": "MEMBER"
+    Map<String, String> headers = {
+      "Content-Type": "application/json; charset=UTF-8",
     };
-
-    var url = Uri.parse('https://server-irxa6nl5aa-uc.a.run.app/auth/signup');
+    Map<String, String> body = {
+      "nickname": nicknameText.text,
+      "email": emailText.text,
+      "password": passwordText.text,
+      "userLevel": userLevelText.text
+    };
+    print('before');
+    var url = Uri.parse('http://10.0.2.2:8080/auth/signup');
     try{
       var response = await http.post(
-          url,
-          body: jsonEncode(body));
+        url,
+        body: jsonEncode(body),
+        headers: headers, // JSON 형식의 데이터를 보내기 위해 헤더 지정
+      );
+      print('after');
       if(response.statusCode == 200) {
         print('success');
       }
@@ -50,6 +56,7 @@ class _SignUpState extends State<SignUp> {
       print('error occured');
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -110,13 +117,13 @@ class _SignUpState extends State<SignUp> {
 
             ElevatedButton(child: Text('Sign Up'),
                 onPressed: (){
-
+                    signUp();
 
 
                   //context.read<UserStore>().addUser(nicknameText.text, emailText.text, passwordText.text, userLevelText.text);
                   //context.watch<UserStore>().mypageid = context.watch<UserStore>().users.length;
 
-                  Navigator.push(context, MaterialPageRoute(builder: (c) => SignIn()));
+                  //Navigator.push(context, MaterialPageRoute(builder: (c) => SignIn()));
                 })
           ],
         ),

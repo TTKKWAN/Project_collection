@@ -45,11 +45,8 @@ class _SignInState extends State<SignIn> {
   @override
   void initState() {
     super.initState();
-    print('a');
     context.read<UserStore>().getData_users();
-    context.read<UserStore>().getData_communities();
-
-    print('s');
+    //context.read<UserStore>().getData_communities();
   }
 
   @override
@@ -119,7 +116,6 @@ class _SignInState extends State<SignIn> {
                       },),
                   ],
                 ),
-      
               ],
             ),
           ),
@@ -135,10 +131,8 @@ class UserStore extends ChangeNotifier {
   var mygrade;
 
   Future<void> getData_users() async{
-    print('before');
     var url = Uri.parse('http://10.0.2.2:8080/auth/alluser');
     final response = await http.get(url);
-    print('after');
     var result2 = jsonDecode(response.body);
     users = result2;
     print(users);
