@@ -5,8 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'util.dart';
 
 class Topten extends StatefulWidget {
-  Topten({Key? key, this.data, this.removedata})
-      : super(key: key);
+  Topten({Key? key, this.data, this.removedata}) : super(key: key);
 
   final data;
   final removedata;
@@ -222,16 +221,25 @@ class _ToptenmenucomponentState extends State<Toptenmenucomponent> {
       },
       child: Row(
         children: [
-          widget.data['photos'].runtimeType == String
-              ? Image.network(
-                  widget.data['photos'],
-                  width: MediaQuery.of(context).size.width *
-                      3 /
-                      10, // 여기 텍스트 부분 가로
-                  height: MediaQuery.of(context).size.width * 3 / 10,
-                )
+          // widget.data['photos'].runtimeType == String
+          //     ? Image.network(
+          //         widget.data['photos'],
+          //         width: MediaQuery.of(context).size.width *
+          //             3 /
+          //             10, // 여기 텍스트 부분 가로
+          //         height: MediaQuery.of(context).size.width * 3 / 10,
+          //       )
+          //     : Image.file(
+          //         widget.data['photos'],
+          //         width: MediaQuery.of(context).size.width *
+          //             3 /
+          //             10, // 여기 텍스트 부분 가로
+          //         height: MediaQuery.of(context).size.width * 3 / 10,
+          //       ),
+          (widget.data['photos'][0].contains("photo"))
+              ? Text('photo is here')
               : Image.file(
-                  widget.data['photos'],
+                  File(widget.data['photos'][0]),
                   width: MediaQuery.of(context).size.width *
                       3 /
                       10, // 여기 텍스트 부분 가로

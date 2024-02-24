@@ -20,14 +20,12 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-
   var nicknameText = TextEditingController();
   var emailText = TextEditingController();
   var passwordText = TextEditingController();
   var userLevelText = TextEditingController();
 
-
-  Future<void> signUp() async{
+  Future<void> signUp() async {
     Map<String, String> headers = {
       "Content-Type": "application/json; charset=UTF-8",
     };
@@ -39,24 +37,22 @@ class _SignUpState extends State<SignUp> {
     };
     print('before');
     var url = Uri.parse('http://10.0.2.2:8080/auth/signup');
-    try{
+    try {
       var response = await http.post(
         url,
         body: jsonEncode(body),
         headers: headers, // JSON 형식의 데이터를 보내기 위해 헤더 지정
       );
       print('after');
-      if(response.statusCode == 200) {
+      if (response.statusCode == 200) {
         print('success');
-      }
-      else{
+      } else {
         print('fail');
       }
-    } catch(e){
+    } catch (e) {
       print('error occured');
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -66,64 +62,74 @@ class _SignUpState extends State<SignUp> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Sign Up',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),),
+            Text(
+              'Sign Up',
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+            ),
 
             //nickname
-            Padding(padding: EdgeInsets.fromLTRB(0, 20, 0, 10),
+            Padding(
+              padding: EdgeInsets.fromLTRB(0, 20, 0, 10),
               child: TextField(
                 controller: nicknameText,
                 decoration: InputDecoration(
                     labelText: 'Nickname',
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),)
-                ),
-              ),),
+                      borderRadius: BorderRadius.circular(10),
+                    )),
+              ),
+            ),
 
             //email
-            Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+            Padding(
+              padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
               child: TextField(
                 controller: emailText,
                 decoration: InputDecoration(
-
                     labelText: 'Email',
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),)
-                ),
-              ),),
+                      borderRadius: BorderRadius.circular(10),
+                    )),
+              ),
+            ),
             //pw
-            Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+            Padding(
+              padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
               child: TextField(
                 controller: passwordText,
                 obscureText: true,
                 decoration: InputDecoration(
                     labelText: 'Password',
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),)
-                ),
-              ),),
+                      borderRadius: BorderRadius.circular(10),
+                    )),
+              ),
+            ),
 
             //userLevel
-            Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+            Padding(
+              padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
               child: TextField(
                 controller: userLevelText,
                 decoration: InputDecoration(
                     labelText: 'MEMBER or MANAGER',
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),)
-                ),
+                      borderRadius: BorderRadius.circular(10),
+                    )),
               ),
             ),
 
-            ElevatedButton(child: Text('Sign Up'),
-                onPressed: (){
-                    signUp();
-
+            ElevatedButton(
+                child: Text('Sign Up'),
+                onPressed: () {
+                  signUp();
+                  context.read<UserStore>().getData_users();
 
                   //context.read<UserStore>().addUser(nicknameText.text, emailText.text, passwordText.text, userLevelText.text);
                   //context.watch<UserStore>().mypageid = context.watch<UserStore>().users.length;
 
-                  Navigator.push(context, MaterialPageRoute(builder: (c) => SignIn()));
+                  Navigator.push(
+                      context, MaterialPageRoute(builder: (c) => SignIn()));
                 })
           ],
         ),

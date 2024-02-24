@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -47,22 +48,15 @@ class _menuComponentState extends State<menuComponent> {
       },
       child: Row(
         children: [
-          // widget.data['photos'].runtimeType == String
-          //     ? Image.network(
-          //         widget.data['photos'],
-          //         width: MediaQuery.of(context).size.width *
-          //             3 /
-          //             10, // 여기 텍스트 부분 가로
-          //         height: MediaQuery.of(context).size.width * 3 / 10,
-          //       )
-          //     : Image.file(
-          //         widget.data['photos'],
-          //         width: MediaQuery.of(context).size.width *
-          //             3 /
-          //             10, // 여기 텍스트 부분 가로
-          //         height: MediaQuery.of(context).size.width * 3 / 10,
-          //       ),
-
+          (widget.data['photos'][0].contains("photo"))
+              ? Text('photo is here')
+              : Image.file(
+                  File(widget.data['photos'][0]),
+                  width: MediaQuery.of(context).size.width *
+                      3 /
+                      10, // 여기 텍스트 부분 가로
+                  height: MediaQuery.of(context).size.width * 3 / 10,
+                ), // 일단 사진 삽입할 부분 체크
           const SizedBox(width: 10),
           Container(
               width: MediaQuery.of(context).size.width * 1 / 2, // 여기
@@ -132,89 +126,150 @@ class _detailPageState extends State<detailPage> {
           width: 15,
         )
       ]),
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(
-            child: widget.data['photos'].runtimeType == String
-                ? Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Image.network(widget.data['photos']),
-                  )
-                : Image.file(widget.data['photos']),
-          ),
-          SliverToBoxAdapter(
-            child: Row(
-              children: [
-                const SizedBox(
-                  width: 5,
-                ),
-                IconButton(
-                  icon: f % 2 == 1
-                      ? Icon(Icons.favorite)
-                      : Icon(Icons.favorite_border_outlined),
-                  color: f % 2 == 0 ? Colors.red : Colors.red,
-                  onPressed: () {
-                    setState(() {
-                      if (f % 2 == 0) {
-                        widget.data['hearts']++;
-                      } else {
-                        widget.data['hearts']--;
-                      }
-                      f++;
-                    });
-                  },
-                ),
-                // icon: const Icon(Icons.favorite_border)),
-                Text(widget.data['hearts'].toString()),
-              ],
-            ),
-          ),
-          SliverToBoxAdapter(
-              child: Container(
-                  child: Row(
+      body: CustomScrollView(slivers: <Widget>[
+        SliverToBoxAdapter(
+            child: (widget.data['photos'][0].contains("photo")
+                ? Text('This is photo place')
+                : Image.file(
+                    File(widget.data['photos'][0]),
+                    width: MediaQuery.of(context).size.width * 1.5 / 10,
+                  ))),
+        SliverToBoxAdapter(
+            child: Row(children: [
+          Container(
+              child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(width: 5),
-              Text(widget.data['content'], /////////// 여기가 본문
-                  style: TextStyle(
-                      color: Colors.black, fontFamily: 'NanumSquareRegular')),
+              IconButton(
+                  onPressed: () {
+                    setState(() {
+                      widget.data['hearts']++;
+                    });
+                  },
+                  icon: Icon(Icons.favorite)),
+              Text(widget.data['hearts'].toString())
             ],
-          ))),
-          SliverToBoxAdapter(
-            child: Padding(
+          )),
+          Container(
+              child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(width: 5),
+              Flexible(
+                child: Text(widget.data['content'], /////////// 여기가 본문
+                    style: TextStyle(
+                        color: Colors.black, fontFamily: 'NanumSquareRegular')),
+              ),
+            ],
+          ))
+        ])),
+        SliverToBoxAdapter(
+          child: Padding(
               padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
-              child: TextFormField(
-                  controller: commentInput,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Color(0xA1E7E4E4),
-                    hintText: 'Add a comment',
-                  )),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: TextButton(
-              child: Text('Send'),
-              onPressed: () {
-                if (commentInput.text.isNotEmpty) {
-                  setState(() {
-                    widget.addComment(commentInput.text);
-                  });
-                }
-              },
-            ),
-          ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (c, i) {
-                return ListTile(
-                    leading: Icon(Icons.person),
-                    title: Text(widget.comment[i].toString()));
-              },
-              childCount: widget.comment.length,
-            ),
-          )
-        ],
-      ),
+              child: Column(
+                children: [
+                  TextFormField(
+                      controller: commentInput,
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Color(0xA1E7E4E4),
+                        hintText: 'Add a comment',
+                      )),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (commentInput.text.isNotEmpty) {
+                        setState(() {
+                          widget.addComment(
+                              commentInput.text); // 여기에 댓글추가 함수 집어넣으면 될듯.
+                        });
+                      }
+                    },
+                    child: Text('Send'),
+                  )
+                ],
+              )),
+        ),
+        SliverFixedExtentList(
+          itemExtent: 30.0,
+          delegate: SliverChildBuilderDelegate(
+              (BuildContext context, int index) {
+            return ListTile(
+                leading: Icon(Icons.person),
+                title: Text(widget.comment[index].toString()));
+          },
+              childCount:
+                  widget.comment.length == null ? 0 : widget.comment.length),
+        ),
+        // SliverList(
+        //   delegate: SliverChildBuilderDelegate(
+        //       (context, index) => ListTile(
+        //           leading: Icon(Icons.person),
+        //           title: Text(widget.comment[index].toString())),
+        //       childCount: widget.comment.length),
+        // ),
+
+        // SliverList(
+        //   delegate: SliverChildBuilderDelegate(
+        //     (c, i) {
+        //       return ListTile(
+        //           leading: Icon(Icons.person),
+        //           title: Text(widget.comment[i].toString()));
+        //     },
+        //     childCount: widget.comment.length,
+        //   ),
+        // )
+      ]),
     );
   }
 }
+
+
+
+// SliverToBoxAdapter(child: Text('This is photo place')),
+          // widget.data['photos'][0].runtimeType == String
+          // ? Padding(
+          //     padding: const EdgeInsets.all(15.0),
+          //     child: Image.network(widget.data['photos']),
+          //   )
+          // ? Column(children: [
+          //     Image.file(
+          //       File(widget.data['photos'][0]),
+          //       width: MediaQuery.of(context).size.width * 1.5 / 10,
+          //     ),
+          // widget.data['photo'].length > 1 ////////////// 하아
+          //     ? Image.file(
+          //         File(widget.data['photos'][1]),
+          //         width: MediaQuery.of(context).size.width * 1.5 / 10,
+          //       )
+          //     : Text("y")
+          // ])],
+
+
+          // SliverToBoxAdapter(
+          //   child: Row(
+          //     children: [
+          //       const SizedBox(
+          //         width: 5,
+          //       ),
+          //       IconButton(
+          //         icon: f % 2 == 1
+          //             ? Icon(Icons.favorite)
+          //             : Icon(Icons.favorite_border_outlined),
+          //         color: f % 2 == 0 ? Colors.red : Colors.red,
+          //         onPressed: () {
+          //           setState(() {
+          //             if (f % 2 == 0) {
+          //               widget.data['hearts']++;
+          //             } else {
+          //               widget.data['hearts']--;
+          //             }
+          //             f++;
+          //           });
+          //         },
+          //       ),
+          //       // icon: const Icon(Icons.favorite_border)),
+          //       Text(widget.data['hearts'].toString()),
+          //     ],
+          //   ),
+          // ),

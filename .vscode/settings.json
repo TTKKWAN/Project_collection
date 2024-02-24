@@ -1,3 +1,4 @@
 {
-    "git.ignoreLimitWarning": true
+    "git.ignoreLimitWarning": true,
+    "avdmanager.sdkPath": "c:\\Users\\Administrator\\Desktop\\Client3\\lib"
 }

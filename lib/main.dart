@@ -10,11 +10,15 @@ import 'signin.dart';
 import 'Topten.dart';
 import 'main_app_bar.dart';
 import 'mypage.dart';
+import 'signup.dart';
 
 //https://server-irxa6nl5aa-uc.a.run.app/
 
 void main() {
-  runApp(ChangeNotifierProvider(create: (_) => UserStore(), child: MaterialApp(home: MyApp()),)
+  runApp(ChangeNotifierProvider(
+    create: (_) => UserStore(),
+    child: MaterialApp(home: MyApp()),
+  )
       //home: SignIn()
       );
 }
@@ -81,67 +85,73 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   var tab = 1;
-  var data = [{"title": "title1",
-    "content": "content1",
-    "location": "anam",
-    "photos": ["photo1"],
-    "sjdskl": "sdjlk"}];
-  var userImage;
-  var userContent = ['0', '0'];
-  var newlike = 0;
 
-  setUserContent(i, a) {
-    setState(() {
-      if (i == 0) {
-        newlike = a;
-      } else if (i == 1) {
-        userContent[0] = a;
-      } else {
-        userContent[1] = a;
-      }
-    });
-  }
+  // List<Map<String, dynamic>> data = [
+  //   {
+  //     "title": "title1",
+  //     "content": "content1",
+  //     "location": "anam",
+  //     "photos": ["photo1"]
+  //   }
+  // ];
 
-    Future<void> getData() async {
-    var url = Uri.parse('http://10.0.2.2:8080/boards/');
-    final response = await http.get(url);
-
-    var result2 = jsonDecode(response.body);
-    setState(() {
-      data = result2;
-    });
+  List<dynamic> data = [
+    {
+      "title": "title1",
+      "content": "content1",
+      "location": "anam",
+      "photos": ["photo1"]
     }
+  ];
 
+  var userImage1;
+  var userImage2;
+
+  Future<void> getData() async {
+    ////////// 여기가 제일 중요
+    final token =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuaWNrbmFtZSI6IjEyMzQ1IiwiaWF0IjoxNzA4Nzc1NDYwLCJleHAiOjE3MDg3OTM0NjB9.CfPcOZxpe8MWFJUAbsQGSNYIYUzckaxmQslNYsufvG8";
+    var url = Uri.parse('http://10.0.2.2:8080/boards/');
+    http.Response response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
+    setState(() {
+      data = json.decode(response.body);
+    });
+  } //////////////// 여기가 제일 중요
 
   //새로운 board 만드는 함수,
-  Future<void> addMyData() async {
-    final token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuaWNrbmFtZSI6InNlYmluIiwiaWF0IjoxNzA4NTM3NTIzLCJleHAiOjE3MDg1NTU1MjN9.JZxRCrKXWci_iWFKNnJ_k6Myp1vtMQfUS7j5_wYT-dA";
-    var url = Uri.parse('https://server-irxa6nl5aa-uc.a.run.app/boards/');
+  Future<void> addMyData(
+      String newtitle, String newcontent, photopath1, photopath2) async {
+    final token =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuaWNrbmFtZSI6IjEyMzQ1IiwiaWF0IjoxNzA4Nzc1NDYwLCJleHAiOjE3MDg3OTM0NjB9.CfPcOZxpe8MWFJUAbsQGSNYIYUzckaxmQslNYsufvG8";
+    var url = Uri.parse('http://10.0.2.2:8080/boards/');
+
+    File imageFile = File(photopath1.toString());
+    List<int> imageBytes = imageFile.readAsBytesSync();
+    String base64Image1 = base64Encode(imageBytes);
+
+    File imageFile2 = File(photopath2.toString());
+    List<int> imageBytes2 = imageFile2.readAsBytesSync();
+    String base64Image2 = base64Encode(imageBytes2);
 
     var myData = {
-
-        "title": "title1",
-        "content": "content1",
-        "location": "anam",
-        "photos": ["photo1"]
-
-
-
-      // 'title': userContent[0],
-      // 'content': userContent[1],
-      // 'location': "anam",
-      // 'photos': userImage,
-      // 'hearts': newlike,
+      "title": newtitle,
+      "content": newcontent,
+      "location": "newanam",
+      "photos": ['$base64Image1', '$base64Image2']
     };
 
     try {
-      var response = await http.post(
-        url,
-        headers: <String, String>{
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode((myData))
-      );
+      var response = await http.post(url,
+          headers: <String, String>{
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode((myData)));
       if (response.statusCode == 200) {
         print('addMyDataSuccess');
       } else {
@@ -151,16 +161,17 @@ class _MyAppState extends State<MyApp> {
       print('addMyDataError');
     }
 
-    setState(() {
-      data.insert(0, myData);
-    });
+    getData();
+    // setState(() {
+    //   data.insert(0, myData); // 일단 여기 뺐음 오후 3 : 25
+    // });
   }
 
   Future<void> removedata(boardIdd) async {
-    final token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuaWNrbmFtZSI6InNlYmluIiwiaWF0IjoxNzA4NTI5OTI2LCJleHAiOjE3MDg1NDc5MjZ9.0CE4nDRBMEeGSTOHNzbuYEchrZs7PrwbFvcOQQL1WQY";
+    final token =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuaWNrbmFtZSI6IjEyMzQ1IiwiaWF0IjoxNzA4Nzc1NDYwLCJleHAiOjE3MDg3OTM0NjB9.CfPcOZxpe8MWFJUAbsQGSNYIYUzckaxmQslNYsufvG8";
     final boardId = boardIdd;
-    final url = Uri.parse(
-        'https://server-irxa6nl5aa-uc.a.run.app/boards/$boardId');
+    final url = Uri.parse('http://10.0.2.2:8080/boards/$boardId');
 
     try {
       final response = await http.delete(
@@ -182,9 +193,6 @@ class _MyAppState extends State<MyApp> {
     getData();
   }
 
-
-
-
   void initState() {
     super.initState();
     getData();
@@ -202,15 +210,23 @@ class _MyAppState extends State<MyApp> {
               source: ImageSource.gallery); //ImageSource.camera도 가능.
           if (image != null) {
             setState(() {
-              userImage = File(image.path);
+              userImage1 = File(image.path);
+            });
+          }
+          var picker2 = ImagePicker();
+          var image2 = await picker2.pickImage(
+              source: ImageSource.gallery); //ImageSource.camera도 가능.
+          if (image2 != null) {
+            setState(() {
+              userImage2 = File(image2.path);
             });
           }
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (c) => Upload(
-                        userImage: userImage,
-                        setUserContent: setUserContent,
+                        userImage1: userImage1,
+                        userImage2: userImage2,
                         addMyData: addMyData,
                       ) //scafold 시작해서 rayout 집어넣으면 됨.
                   ));
@@ -222,28 +238,30 @@ class _MyAppState extends State<MyApp> {
         preferredSize: Size.fromHeight(60), // 앱바 높이 조절
         child: Custombar(), ///////////////// 커스텀 앱바 적용
       ),
-      body: data.isEmpty // 로딩 중일 때 하얀색 화면
-          ? const Padding(
-              padding: EdgeInsets.only(top: 200),
-              child:
-                  Text("hello", style: TextStyle(fontSize: 20, color: Colors.grey)),
-            ) //
-          : [
-              Topten(
-                data: data,
-                //addData: addData,
-                removedata: removedata,
-              ),
-              Home(
-                data: data,
-                //addData: addData,
-                removedata: removedata,
-              ),
-        ChangeNotifierProvider(create: (c) => UserStore(), child: Mypage(
-            removedata: removedata,
-            data: data
-        ),)
-            ][tab],
+      body:
+          // data.isEmpty // 로딩 중일 때 하얀색 화면
+          data.isEmpty
+              ? const Padding(
+                  padding: EdgeInsets.only(top: 200),
+                  child: Text("hello",
+                      style: TextStyle(fontSize: 20, color: Colors.grey)),
+                )
+              : [
+                  Topten(
+                    data: data,
+                    //addData: addData,
+                    removedata: removedata,
+                  ),
+                  Home(
+                    data: data,
+                    //addData: addData,
+                    removedata: removedata,
+                  ),
+                  ChangeNotifierProvider(
+                    create: (c) => UserStore(),
+                    child: Mypage(removedata: removedata, data: data),
+                  )
+                ][tab],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: tab,
         selectedItemColor: Color.fromARGB(255, 97, 22, 134),
@@ -266,11 +284,34 @@ class _MyAppState extends State<MyApp> {
 }
 
 ///////////////////////////////여기서부터 다른파일로 들어가야 할 부분 //////////////////////////////////////////////////
-class Upload extends StatelessWidget {
-  Upload({super.key, this.userImage, this.setUserContent, this.addMyData});
-  final userImage;
-  final setUserContent;
+class Upload extends StatefulWidget {
+  Upload({
+    super.key,
+    this.userImage1,
+    this.userImage2,
+    this.addMyData,
+  });
+  final userImage1;
+  final userImage2;
   final addMyData;
+
+  @override
+  State<Upload> createState() => _UploadState();
+}
+
+class _UploadState extends State<Upload> {
+  var insert_title;
+  var insert_content;
+  var user_Image1;
+  var user_Image2;
+
+  setUserContent(i, a) {
+    if (i == 1) {
+      insert_title = a.toString();
+    } else {
+      insert_content = a.toString();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -279,7 +320,11 @@ class Upload extends StatelessWidget {
         actions: [
           IconButton(
               onPressed: () {
-                addMyData();
+                widget.addMyData(
+                    insert_title.toString(),
+                    insert_content.toString(),
+                    user_Image1.path,
+                    user_Image2.path);
                 Navigator.pop(context);
               },
               icon: Icon(Icons.add))
@@ -290,23 +335,34 @@ class Upload extends StatelessWidget {
           // Text('이미지 업로드 화면'),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Image.file(userImage),
+            child: Column(children: [
+              Image.file(
+                widget.userImage1,
+                width: MediaQuery.of(context).size.width * 3 / 10,
+              ),
+              Image.file(
+                widget.userImage2,
+                width: MediaQuery.of(context).size.width * 3 / 10,
+              )
+            ]),
           ),
           TextField(
             onChanged: (text) {
-              setUserContent(0, int.parse(text));
-            },
-            decoration: InputDecoration(labelText: ' 좋아요 수'),
-          ),
-          TextField(
-            onChanged: (text) {
-              setUserContent(1, text);
+              setState(() {
+                user_Image1 = widget.userImage1;
+                user_Image2 = widget.userImage2;
+              });
+              setState(() {
+                setUserContent(1, text);
+              });
             },
             decoration: InputDecoration(labelText: ' 글쓴이 이름'),
           ),
           TextField(
             onChanged: (text) {
-              setUserContent(2, text);
+              setState(() {
+                setUserContent(2, text);
+              });
             },
             decoration: InputDecoration(labelText: ' 내용'),
           ),
