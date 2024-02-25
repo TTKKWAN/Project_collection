@@ -66,8 +66,7 @@ class _HomeState extends State<Home> {
                               const BorderRadius.all(Radius.circular(10)),
                         ),
                         child: menuComponent(
-                          data: widget.data[index],
-                        ),
+                            data: widget.data[index], index: index),
                       ),
                     ],
                   )));
@@ -110,7 +109,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> getData() async {
     ////////// 여기가 제일 중요
     final token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuaWNrbmFtZSI6IjEyMzQ1IiwiaWF0IjoxNzA4Nzc1NDYwLCJleHAiOjE3MDg3OTM0NjB9.CfPcOZxpe8MWFJUAbsQGSNYIYUzckaxmQslNYsufvG8";
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuaWNrbmFtZSI6IjEyMzQ1IiwiaWF0IjoxNzA4ODY5NDMwLCJleHAiOjE3MDg4ODc0MzB9._83mb9FxErVxRsH46BV5EUe7Nrl7WuydT8akyh1DLyY";
     var url = Uri.parse('http://10.0.2.2:8080/boards/');
     http.Response response = await http.get(
       url,
@@ -124,34 +123,31 @@ class _MyAppState extends State<MyApp> {
   } //////////////// 여기가 제일 중요
 
   //새로운 board 만드는 함수,
-  Future<void> addMyData(
-      String newtitle, String newcontent, photopath1, photopath2) async {
+  Future<void> addMyData(String newtitle, String newcontent, photopath1) async {
     final token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuaWNrbmFtZSI6IjEyMzQ1IiwiaWF0IjoxNzA4Nzc1NDYwLCJleHAiOjE3MDg3OTM0NjB9.CfPcOZxpe8MWFJUAbsQGSNYIYUzckaxmQslNYsufvG8";
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuaWNrbmFtZSI6IjEyMzQ1IiwiaWF0IjoxNzA4ODY5NDMwLCJleHAiOjE3MDg4ODc0MzB9._83mb9FxErVxRsH46BV5EUe7Nrl7WuydT8akyh1DLyY";
     var url = Uri.parse('http://10.0.2.2:8080/boards/');
+    Map<String, String> headers = {
+      "Content-Type": "application/json; charset=UTF-8",
+    };
 
     File imageFile = File(photopath1.toString());
     List<int> imageBytes = imageFile.readAsBytesSync();
     String base64Image1 = base64Encode(imageBytes);
 
-    File imageFile2 = File(photopath2.toString());
-    List<int> imageBytes2 = imageFile2.readAsBytesSync();
-    String base64Image2 = base64Encode(imageBytes2);
-
-    var myData = {
-      "title": newtitle,
-      "content": newcontent,
+    Map<String, dynamic> myData = {
+      "title": newtitle.toString(),
+      "content": newcontent.toString(),
       "location": "newanam",
-      "photos": ['$base64Image1', '$base64Image2']
+      "photos": ['$base64Image1']
+      // "photos": ['photo']
     };
 
+    print("$base64Image1");
+
     try {
-      var response = await http.post(url,
-          headers: <String, String>{
-            'Authorization': 'Bearer $token',
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode((myData)));
+      var response =
+          await http.post(url, headers: headers, body: jsonEncode(myData));
       if (response.statusCode == 200) {
         print('addMyDataSuccess');
       } else {
@@ -169,7 +165,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> removedata(boardIdd) async {
     final token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuaWNrbmFtZSI6IjEyMzQ1IiwiaWF0IjoxNzA4Nzc1NDYwLCJleHAiOjE3MDg3OTM0NjB9.CfPcOZxpe8MWFJUAbsQGSNYIYUzckaxmQslNYsufvG8";
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuaWNrbmFtZSI6IjEyMzQ1IiwiaWF0IjoxNzA4ODY5NDMwLCJleHAiOjE3MDg4ODc0MzB9._83mb9FxErVxRsH46BV5EUe7Nrl7WuydT8akyh1DLyY";
     final boardId = boardIdd;
     final url = Uri.parse('http://10.0.2.2:8080/boards/$boardId');
 
@@ -213,20 +209,12 @@ class _MyAppState extends State<MyApp> {
               userImage1 = File(image.path);
             });
           }
-          var picker2 = ImagePicker();
-          var image2 = await picker2.pickImage(
-              source: ImageSource.gallery); //ImageSource.camera도 가능.
-          if (image2 != null) {
-            setState(() {
-              userImage2 = File(image2.path);
-            });
-          }
+
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (c) => Upload(
                         userImage1: userImage1,
-                        userImage2: userImage2,
                         addMyData: addMyData,
                       ) //scafold 시작해서 rayout 집어넣으면 됨.
                   ));
@@ -243,7 +231,7 @@ class _MyAppState extends State<MyApp> {
           data.isEmpty
               ? const Padding(
                   padding: EdgeInsets.only(top: 200),
-                  child: Text("hello",
+                  child: Text("           loading",
                       style: TextStyle(fontSize: 20, color: Colors.grey)),
                 )
               : [
@@ -288,11 +276,9 @@ class Upload extends StatefulWidget {
   Upload({
     super.key,
     this.userImage1,
-    this.userImage2,
     this.addMyData,
   });
   final userImage1;
-  final userImage2;
   final addMyData;
 
   @override
@@ -303,7 +289,6 @@ class _UploadState extends State<Upload> {
   var insert_title;
   var insert_content;
   var user_Image1;
-  var user_Image2;
 
   setUserContent(i, a) {
     if (i == 1) {
@@ -321,10 +306,10 @@ class _UploadState extends State<Upload> {
           IconButton(
               onPressed: () {
                 widget.addMyData(
-                    insert_title.toString(),
-                    insert_content.toString(),
-                    user_Image1.path,
-                    user_Image2.path);
+                  insert_title.toString(),
+                  insert_content.toString(),
+                  user_Image1.path,
+                );
                 Navigator.pop(context);
               },
               icon: Icon(Icons.add))
@@ -336,27 +321,20 @@ class _UploadState extends State<Upload> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(children: [
-              Image.file(
-                widget.userImage1,
-                width: MediaQuery.of(context).size.width * 3 / 10,
-              ),
-              Image.file(
-                widget.userImage2,
-                width: MediaQuery.of(context).size.width * 3 / 10,
-              )
+              Image.file(widget.userImage1,
+                  width: 200, height: 200, fit: BoxFit.fill),
             ]),
           ),
           TextField(
             onChanged: (text) {
               setState(() {
                 user_Image1 = widget.userImage1;
-                user_Image2 = widget.userImage2;
               });
               setState(() {
                 setUserContent(1, text);
               });
             },
-            decoration: InputDecoration(labelText: ' 글쓴이 이름'),
+            decoration: InputDecoration(labelText: 'Title'),
           ),
           TextField(
             onChanged: (text) {
@@ -364,7 +342,7 @@ class _UploadState extends State<Upload> {
                 setUserContent(2, text);
               });
             },
-            decoration: InputDecoration(labelText: ' 내용'),
+            decoration: InputDecoration(labelText: ' Content'),
           ),
         ],
       ),

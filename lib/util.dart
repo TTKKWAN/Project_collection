@@ -11,16 +11,33 @@ import 'main.dart';
 import 'package:tttoy/text.dart';
 
 List<String> lst = [
-  'camera.jpg',
-  'balcony.jpg',
-  'rain.webp',
-  'desk.jpg',
+  'assets/im1.jpg',
+  'assets/im2.jpg',
+  'assets/im3.jpg',
+  'assets/desk.jpg',
+  'assets/land.jpg',
+  'assets/rain.webp',
 ];
 
+Widget makeImage(BoxFit option, photo) {
+  return Container(
+    child: Image.asset(photo, width: 100, height: 100, fit: option),
+    padding: EdgeInsets.only(left: 2, right: 2, bottom: 1),
+  );
+}
+
+Widget makeImagedetail(BoxFit option, photo) {
+  return Container(
+    child: Image.asset(photo, width: 300, height: 300, fit: option),
+    padding: EdgeInsets.only(left: 2, right: 2, bottom: 1),
+  );
+}
+
 class menuComponent extends StatefulWidget {
-  const menuComponent({Key? key, this.data}) : super(key: key);
+  const menuComponent({Key? key, this.data, this.index}) : super(key: key);
 
   final data;
+  final index;
 
   @override
   State<menuComponent> createState() => _menuComponentState();
@@ -42,6 +59,7 @@ class _menuComponentState extends State<menuComponent> {
             context,
             MaterialPageRoute(
                 builder: (c) => detailPage(
+                    index: widget.index,
                     data: widget.data,
                     comment: comment,
                     addComment: addComment)));
@@ -49,14 +67,16 @@ class _menuComponentState extends State<menuComponent> {
       child: Row(
         children: [
           (widget.data['photos'][0].contains("photo"))
-              ? Text('photo is here')
-              : Image.file(
-                  File(widget.data['photos'][0]),
-                  width: MediaQuery.of(context).size.width *
-                      3 /
-                      10, // 여기 텍스트 부분 가로
-                  height: MediaQuery.of(context).size.width * 3 / 10,
-                ), // 일단 사진 삽입할 부분 체크
+              ? (widget.index == null
+                  ? Text('photo')
+                  : makeImage(BoxFit.fill, lst[widget.index]))
+              : Image.file(File(widget.data['photos'][0]),
+                  width: 100, height: 100, fit: BoxFit.fill
+                  // width: MediaQuery.of(context).size.width *
+                  //     3 /
+                  //     10, // 여기 텍스트 부분 가로
+                  // height: MediaQuery.of(context).size.width * 3 / 10,
+                  ), // 일단 사진 삽입할 부분 체크
           const SizedBox(width: 10),
           Container(
               width: MediaQuery.of(context).size.width * 1 / 2, // 여기
@@ -103,10 +123,11 @@ class _menuComponentState extends State<menuComponent> {
 }
 
 class detailPage extends StatefulWidget {
-  detailPage({super.key, this.data, this.comment, this.addComment});
+  detailPage({super.key, this.data, this.comment, this.addComment, this.index});
   final data;
   final comment;
   final addComment;
+  final index;
 
   @override
   State<detailPage> createState() => _detailPageState();
@@ -119,88 +140,188 @@ class _detailPageState extends State<detailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.data['title'].toString()), actions: [
-        Icon(Icons.location_on_outlined),
-        Text('location'),
-        SizedBox(
-          width: 15,
-        )
-      ]),
-      body: CustomScrollView(slivers: <Widget>[
-        SliverToBoxAdapter(
-            child: (widget.data['photos'][0].contains("photo")
-                ? Text('This is photo place')
-                : Image.file(
-                    File(widget.data['photos'][0]),
-                    width: MediaQuery.of(context).size.width * 1.5 / 10,
-                  ))),
-        SliverToBoxAdapter(
-            child: Row(children: [
-          Container(
-              child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(width: 5),
-              IconButton(
+        appBar: AppBar(title: Text(widget.data['title'].toString()), actions: [
+          Icon(Icons.location_on_outlined),
+          Text('GDSC OF KOREA '),
+          SizedBox(
+            width: 15,
+          )
+        ]),
+        body: ListView(
+          // physics: NeverScrollableScrollPhysics(),
+          children: [
+            (widget.data['photos'][0].contains("photo"))
+                ? (widget.index == null
+                    ? Text('photo')
+                    : makeImagedetail(BoxFit.fill, lst[widget.index]))
+                : Image.file(File(widget.data['photos'][0]),
+                    width: 200, height: 200, fit: BoxFit.fill),
+            Container(
+                child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(width: 5),
+                IconButton(
                   onPressed: () {
                     setState(() {
                       widget.data['hearts']++;
+                      f++;
                     });
                   },
-                  icon: Icon(Icons.favorite)),
-              Text(widget.data['hearts'].toString())
-            ],
-          )),
-          Container(
-              child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(width: 5),
-              Flexible(
-                child: Text(widget.data['content'], /////////// 여기가 본문
-                    style: TextStyle(
-                        color: Colors.black, fontFamily: 'NanumSquareRegular')),
-              ),
-            ],
-          ))
-        ])),
-        SliverToBoxAdapter(
-          child: Padding(
-              padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
-              child: Column(
+                  icon: (f % 2 == 0
+                      ? Icon(Icons.favorite_border)
+                      : Icon(Icons.favorite)),
+                  color: Colors.red,
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                  child: Text(
+                    widget.data['hearts'].toString(),
+                    style: TextStyle(fontSize: 20),
+                  ),
+                )
+              ],
+            )),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+              child: Container(
+                  child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  TextFormField(
-                      controller: commentInput,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Color(0xA1E7E4E4),
-                        hintText: 'Add a comment',
-                      )),
-                  ElevatedButton(
-                    onPressed: () {
-                      if (commentInput.text.isNotEmpty) {
-                        setState(() {
-                          widget.addComment(
-                              commentInput.text); // 여기에 댓글추가 함수 집어넣으면 될듯.
-                        });
-                      }
-                    },
-                    child: Text('Send'),
-                  )
+                  const SizedBox(width: 5),
+                  Flexible(
+                    child: Text(widget.data['content'], /////////// 여기가 본문
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontFamily: 'NanumSquareRegular')),
+                  ),
                 ],
               )),
-        ),
-        SliverFixedExtentList(
-          itemExtent: 30.0,
-          delegate: SliverChildBuilderDelegate(
-              (BuildContext context, int index) {
-            return ListTile(
-                leading: Icon(Icons.person),
-                title: Text(widget.comment[index].toString()));
-          },
-              childCount:
-                  widget.comment.length == null ? 0 : widget.comment.length),
-        ),
+            ),
+            Padding(
+                padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
+                child: Column(
+                  children: [
+                    TextFormField(
+                        controller: commentInput,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Color(0xA1E7E4E4),
+                          hintText: 'Add a comment',
+                        )),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (commentInput.text.isNotEmpty) {
+                          setState(() {
+                            widget.addComment(
+                                commentInput.text); // 여기에 댓글추가 함수 집어넣으면 될듯.
+                          });
+                        }
+                      },
+                      child: Text('Send'),
+                    )
+                  ],
+                )),
+            Container(
+              height: 0.5,
+              width: 500.0,
+              color: Colors.black,
+            ),
+            Flexible(
+              child: Container(
+                  child: ListView.separated(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: widget.comment.length,
+                itemBuilder: (BuildContext ctx, int idx) {
+                  return ListTile(
+                      leading: Icon(Icons.person),
+                      title: Text(widget.comment[idx].toString()));
+                },
+                separatorBuilder: (BuildContext context, int index) =>
+                    const Divider(),
+              )),
+            )
+          ],
+        ));
+  }
+}
+      
+      
+      // CustomScrollView(slivers: <Widget>[
+      //   SliverToBoxAdapter(
+      //       child: (widget.data['photos'][0].contains("photo")
+      //           ? Text('This is photo place')
+      //           : Image.file(
+      //               File(widget.data['photos'][0]),
+      //               width: MediaQuery.of(context).size.width * 1.5 / 10,
+      //             ))),
+      //   SliverToBoxAdapter(
+      //       child: Row(children: [
+      //     Container(
+      //         child: Row(
+      //       crossAxisAlignment: CrossAxisAlignment.start,
+      //       children: [
+      //         const SizedBox(width: 5),
+      //         IconButton(
+      //             onPressed: () {
+      //               setState(() {
+      //                 widget.data['hearts']++;
+      //               });
+      //             },
+      //             icon: Icon(Icons.favorite)),
+      //         Text(widget.data['hearts'].toString())
+      //       ],
+      //     )),
+      //     Container(
+      //         child: Row(
+      //       crossAxisAlignment: CrossAxisAlignment.center,
+      //       children: [
+      //         const SizedBox(width: 5),
+      //         Flexible(
+      //           child: Text(widget.data['content'], /////////// 여기가 본문
+      //               style: TextStyle(
+      //                   color: Colors.black, fontFamily: 'NanumSquareRegular')),
+      //         ),
+      //       ],
+      //     ))
+      //   ])),
+      //   SliverToBoxAdapter(
+      //     child: Padding(
+      //         padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
+      //         child: Column(
+      //           children: [
+      //             TextFormField(
+      //                 controller: commentInput,
+      //                 decoration: InputDecoration(
+      //                   filled: true,
+      //                   fillColor: Color(0xA1E7E4E4),
+      //                   hintText: 'Add a comment',
+      //                 )),
+      //             ElevatedButton(
+      //               onPressed: () {
+      //                 if (commentInput.text.isNotEmpty) {
+      //                   setState(() {
+      //                     widget.addComment(
+      //                         commentInput.text); // 여기에 댓글추가 함수 집어넣으면 될듯.
+      //                   });
+      //                 }
+      //               },
+      //               child: Text('Send'),
+      //             )
+      //           ],
+      //         )),
+      //   ),
+        
+      //   // SliverFixedExtentList(
+      //   //   itemExtent: 30.0,
+        //   delegate: SliverChildBuilderDelegate(
+        //       (BuildContext context, int index) {
+
+        //   },
+        //       childCount:
+        //           widget.comment.length == null ? 0 : widget.comment.length),
+        // ),
         // SliverList(
         //   delegate: SliverChildBuilderDelegate(
         //       (context, index) => ListTile(
@@ -219,10 +340,7 @@ class _detailPageState extends State<detailPage> {
         //     childCount: widget.comment.length,
         //   ),
         // )
-      ]),
-    );
-  }
-}
+
 
 
 

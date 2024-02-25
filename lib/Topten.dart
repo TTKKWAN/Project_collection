@@ -177,6 +177,7 @@ class _ToptenState extends State<Topten> {
                                     const BorderRadius.all(Radius.circular(10)),
                               ),
                               child: Toptenmenucomponent(
+                                  index: index,
                                   data: Topdata[index],
                                   real: widget.data[index]),
                             ),
@@ -190,10 +191,12 @@ class _ToptenState extends State<Topten> {
 }
 
 class Toptenmenucomponent extends StatefulWidget {
-  const Toptenmenucomponent({Key? key, this.data, this.real}) : super(key: key);
+  const Toptenmenucomponent({Key? key, this.data, this.real, this.index})
+      : super(key: key);
 
   final data;
   final real;
+  final index;
 
   @override
   State<Toptenmenucomponent> createState() => _ToptenmenucomponentState();
@@ -237,14 +240,11 @@ class _ToptenmenucomponentState extends State<Toptenmenucomponent> {
           //         height: MediaQuery.of(context).size.width * 3 / 10,
           //       ),
           (widget.data['photos'][0].contains("photo"))
-              ? Text('photo is here')
-              : Image.file(
-                  File(widget.data['photos'][0]),
-                  width: MediaQuery.of(context).size.width *
-                      3 /
-                      10, // 여기 텍스트 부분 가로
-                  height: MediaQuery.of(context).size.width * 3 / 10,
-                ),
+              ? (widget.index == null
+                  ? Text('photo')
+                  : makeImage(BoxFit.fill, lst[widget.index]))
+              : Image.file(File(widget.data['photos'][0]),
+                  width: 100, height: 100, fit: BoxFit.fill),
           const SizedBox(width: 10),
           Container(
               width: MediaQuery.of(context).size.width * 1 / 2, // 여기

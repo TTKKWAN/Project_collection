@@ -33,12 +33,19 @@ class _MypageState extends State<Mypage> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Icon(
-                  Icons.person,
-                  size: 30,
+                  Icons.person_pin,
+                  size: 40,
                 ),
                 Text(
-                  context.read<UserStore>().users[0]['nickname'],
+                  'Jason Brown',
+                  // context.read<UserStore>().users[0]['nickname'],
                   style: TextStyle(fontWeight: FontWeight.w700, fontSize: 24),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                SizedBox(
+                  width: 10,
                 ),
                 Text(
                   context.read<UserStore>().users[0]['userLevel'],
@@ -66,35 +73,46 @@ class _MypageState extends State<Mypage> {
         ),
         Container(
           child: Text(
-            'My Activities',
+            "My Activity",
             style: TextStyle(
               fontSize: 30,
             ),
           ),
         ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+          child: Container(
+            height: 0.5,
+            width: 500.0,
+            color: Colors.black,
+          ),
+        ),
         //Store1 data에 있는 nickname으로 구분해서 게시물 가져옴
         Expanded(
-          child: ListView.builder(
-              itemCount: widget.data.length,
-              itemBuilder: (c, i) {
-                return GestureDetector(
-                  child: ListTile(
-                    leading: Icon(Icons.location_city),
-                    title: Text(widget.data[i]['title']),
-                    trailing: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            widget.removedata(i);
-                          });
-                        },
-                        icon: Icon(Icons.delete)),
-                  ),
-                  onTap: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (c) => detailPage()));
-                  },
-                );
-              }),
+          child: ListView.separated(
+            itemCount: widget.data.length,
+            itemBuilder: (c, i) {
+              return GestureDetector(
+                child: ListTile(
+                  leading: Icon(Icons.location_city),
+                  title: Text(widget.data[i]['title']),
+                  trailing: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          widget.removedata(i);
+                        });
+                      },
+                      icon: Icon(Icons.delete)),
+                ),
+                onTap: () {
+                  Navigator.push(
+                      context, MaterialPageRoute(builder: (c) => detailPage()));
+                },
+              );
+            },
+            separatorBuilder: (BuildContext context, int index) =>
+                const Divider(),
+          ),
         )
       ],
     ));
