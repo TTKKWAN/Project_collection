@@ -74,17 +74,17 @@ class _menuComponentState extends State<menuComponent> {
                   width: 100, height: 100, fit: BoxFit.fill
                   // width: MediaQuery.of(context).size.width *
                   //     3 /
-                  //     10, // ì—¬ê¸° í…ìŠ¤íŠ¸ ë¶€ë¶„ ê°€ë¡œ
+                  //     10, // ?—¬ê¸? ?…?Š¤?Š¸ ë¶?ë¶? ê°?ë¡?
                   // height: MediaQuery.of(context).size.width * 3 / 10,
-                  ), // ì¼ë‹¨ ì‚¬ì§„ ì‚½ì…í•  ë¶€ë¶„ ì²´í¬
+                  ), // ?¼?‹¨ ?‚¬ì§? ?‚½?…?•  ë¶?ë¶? ì²´í¬
           const SizedBox(width: 10),
           Container(
-              width: MediaQuery.of(context).size.width * 1 / 2, // ì—¬ê¸°
+              width: MediaQuery.of(context).size.width * 1 / 2, // ?—¬ê¸?
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.data['title'], ///////// ì—¬ê¸°ê°€ ì œëª©
+                    widget.data['title'], ///////// ?—¬ê¸°ê?? ? œëª?
                     style: const TextStyle(
                         color: Colors.black, fontWeight: FontWeight.bold),
                   ),
@@ -107,7 +107,7 @@ class _menuComponentState extends State<menuComponent> {
                     overflow: TextOverflow.ellipsis,
                     maxLines: 3,
                     text: TextSpan(
-                        text: widget.data['content'], /////////// ì—¬ê¸°ê°€ ë³¸ë¬¸
+                        text: widget.data['content'], /////////// ?—¬ê¸°ê?? ë³¸ë¬¸
                         style: TextStyle(
                             color: Colors.black,
                             fontFamily: 'NanumSquareRegular')),
@@ -135,7 +135,7 @@ class detailPage extends StatefulWidget {
 
 class _detailPageState extends State<detailPage> {
   var commentInput = TextEditingController();
-  var f = 0;
+  var f = 2;
 
   @override
   Widget build(BuildContext context) {
@@ -190,7 +190,7 @@ class _detailPageState extends State<detailPage> {
                 children: [
                   const SizedBox(width: 5),
                   Flexible(
-                    child: Text(widget.data['content'], /////////// ì—¬ê¸°ê°€ ë³¸ë¬¸
+                    child: Text(widget.data['content'], /////////// ?—¬ê¸°ê?? ë³¸ë¬¸
                         style: TextStyle(
                             color: Colors.black,
                             fontFamily: 'NanumSquareRegular')),
@@ -213,8 +213,8 @@ class _detailPageState extends State<detailPage> {
                       onPressed: () {
                         if (commentInput.text.isNotEmpty) {
                           setState(() {
-                            widget.addComment(
-                                commentInput.text); // ì—¬ê¸°ì— ëŒ“ê¸€ì¶”ê°€ í•¨ìˆ˜ ì§‘ì–´ë„£ìœ¼ë©´ ë ë“¯.
+                            widget.addComment(commentInput
+                                .text); // ?—¬ê¸°ì— ?Œ“ê¸?ì¶”ê?? ?•¨?ˆ˜ ì§‘ì–´?„£?œ¼ë©? ? ?“¯.
                           });
                         }
                       },
@@ -279,7 +279,7 @@ class _detailPageState extends State<detailPage> {
       //       children: [
       //         const SizedBox(width: 5),
       //         Flexible(
-      //           child: Text(widget.data['content'], /////////// ì—¬ê¸°ê°€ ë³¸ë¬¸
+      //           child: Text(widget.data['content'], /////////// ?—¬ê¸°ê?? ë³¸ë¬¸
       //               style: TextStyle(
       //                   color: Colors.black, fontFamily: 'NanumSquareRegular')),
       //         ),
@@ -303,7 +303,7 @@ class _detailPageState extends State<detailPage> {
       //                 if (commentInput.text.isNotEmpty) {
       //                   setState(() {
       //                     widget.addComment(
-      //                         commentInput.text); // ì—¬ê¸°ì— ëŒ“ê¸€ì¶”ê°€ í•¨ìˆ˜ ì§‘ì–´ë„£ìœ¼ë©´ ë ë“¯.
+      //                         commentInput.text); // ?—¬ê¸°ì— ?Œ“ê¸?ì¶”ê?? ?•¨?ˆ˜ ì§‘ì–´?„£?œ¼ë©? ? ?“¯.
       //                   });
       //                 }
       //               },
@@ -355,7 +355,7 @@ class _detailPageState extends State<detailPage> {
           //       File(widget.data['photos'][0]),
           //       width: MediaQuery.of(context).size.width * 1.5 / 10,
           //     ),
-          // widget.data['photo'].length > 1 ////////////// í•˜ì•„
+          // widget.data['photo'].length > 1 ////////////// ?•˜?•„
           //     ? Image.file(
           //         File(widget.data['photos'][1]),
           //         width: MediaQuery.of(context).size.width * 1.5 / 10,
