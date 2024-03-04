@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:image/image.dart' as img;
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'util.dart';
@@ -17,7 +18,7 @@ import 'signup.dart';
 void main() {
   runApp(ChangeNotifierProvider(
     create: (_) => UserStore(),
-    child: MaterialApp(home: MyApp()),
+    child: MaterialApp(home: SignIn()),
   )
       //home: SignIn()
       );
@@ -109,7 +110,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> getData() async {
     ////////// 여기가 제일 중요
     final token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuaWNrbmFtZSI6IjEyMzQ1IiwiaWF0IjoxNzA4ODY5NDMwLCJleHAiOjE3MDg4ODc0MzB9._83mb9FxErVxRsH46BV5EUe7Nrl7WuydT8akyh1DLyY";
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuaWNrbmFtZSI6IjEyMzQ1IiwiaWF0IjoxNzA4ODg0NTg2LCJleHAiOjE3MDg5MDI1ODZ9.V-xMpM-BhepAW740O2Cr3GM2JvDldSL0bWgCsZJjrtw";
     var url = Uri.parse('http://10.0.2.2:8080/boards/');
     http.Response response = await http.get(
       url,
@@ -125,25 +126,22 @@ class _MyAppState extends State<MyApp> {
   //새로운 board 만드는 함수,
   Future<void> addMyData(String newtitle, String newcontent, photopath1) async {
     final token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuaWNrbmFtZSI6IjEyMzQ1IiwiaWF0IjoxNzA4ODY5NDMwLCJleHAiOjE3MDg4ODc0MzB9._83mb9FxErVxRsH46BV5EUe7Nrl7WuydT8akyh1DLyY";
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuaWNrbmFtZSI6IjEyMzQ1IiwiaWF0IjoxNzA4ODg0NTg2LCJleHAiOjE3MDg5MDI1ODZ9.V-xMpM-BhepAW740O2Cr3GM2JvDldSL0bWgCsZJjrtw";
     var url = Uri.parse('http://10.0.2.2:8080/boards/');
+
     Map<String, String> headers = {
       "Content-Type": "application/json; charset=UTF-8",
+      "Authorization": "Bearer $token",
     };
-
-    File imageFile = File(photopath1.toString());
-    List<int> imageBytes = imageFile.readAsBytesSync();
-    String base64Image1 = base64Encode(imageBytes);
 
     Map<String, dynamic> myData = {
       "title": newtitle.toString(),
       "content": newcontent.toString(),
       "location": "newanam",
-      "photos": ['$base64Image1']
-      // "photos": ['photo']
+      "photos": ["photo"]
     };
 
-    print("$base64Image1");
+    // print("$base64Image1");
 
     try {
       var response =
@@ -151,10 +149,11 @@ class _MyAppState extends State<MyApp> {
       if (response.statusCode == 200) {
         print('addMyDataSuccess');
       } else {
-        print("fail");
+        print(response.statusCode);
+        // print('addMyDataError : $myData');
       }
     } catch (e) {
-      print('addMyDataError');
+      print('addMyDataError : $e');
     }
 
     getData();
@@ -165,7 +164,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> removedata(boardIdd) async {
     final token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuaWNrbmFtZSI6IjEyMzQ1IiwiaWF0IjoxNzA4ODY5NDMwLCJleHAiOjE3MDg4ODc0MzB9._83mb9FxErVxRsH46BV5EUe7Nrl7WuydT8akyh1DLyY";
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuaWNrbmFtZSI6IjEyMzQ1IiwiaWF0IjoxNzA4ODg0NTg2LCJleHAiOjE3MDg5MDI1ODZ9.V-xMpM-BhepAW740O2Cr3GM2JvDldSL0bWgCsZJjrtw";
     final boardId = boardIdd;
     final url = Uri.parse('http://10.0.2.2:8080/boards/$boardId');
 
@@ -288,7 +287,7 @@ class Upload extends StatefulWidget {
 class _UploadState extends State<Upload> {
   var insert_title;
   var insert_content;
-  var user_Image1;
+  var user_Image;
 
   setUserContent(i, a) {
     if (i == 1) {
@@ -308,7 +307,7 @@ class _UploadState extends State<Upload> {
                 widget.addMyData(
                   insert_title.toString(),
                   insert_content.toString(),
-                  user_Image1.path,
+                  user_Image.path,
                 );
                 Navigator.pop(context);
               },
@@ -328,9 +327,6 @@ class _UploadState extends State<Upload> {
           TextField(
             onChanged: (text) {
               setState(() {
-                user_Image1 = widget.userImage1;
-              });
-              setState(() {
                 setUserContent(1, text);
               });
             },
@@ -339,6 +335,7 @@ class _UploadState extends State<Upload> {
           TextField(
             onChanged: (text) {
               setState(() {
+                user_Image = widget.userImage1;
                 setUserContent(2, text);
               });
             },

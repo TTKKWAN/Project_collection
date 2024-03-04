@@ -220,7 +220,8 @@ class _ToptenmenucomponentState extends State<Toptenmenucomponent> {
                 builder: (c) => detailPage(
                     data: widget.data,
                     comment: comment,
-                    addComment: addComment)));
+                    addComment: addComment,
+                    index: widget.index)));
       },
       child: Row(
         children: [

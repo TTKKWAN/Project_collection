@@ -11,7 +11,7 @@ import 'main.dart';
 import 'package:tttoy/text.dart';
 
 List<String> lst = [
-  'assets/im1.jpg',
+  'assets/ok.png',
   'assets/im2.jpg',
   'assets/im3.jpg',
   'assets/desk.jpg',

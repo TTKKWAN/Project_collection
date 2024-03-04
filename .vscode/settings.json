@@ -1,4 +1,5 @@
 {
     "git.ignoreLimitWarning": true,
-    "avdmanager.sdkPath": "c:\\Users\\Administrator\\Desktop\\Client3\\lib"
+    "avdmanager.sdkPath": "c:\\Users\\Administrator\\Desktop\\Client3\\lib",
+    "cmake.sourceDirectory": "C:/Users/Administrator/Desktop/Client3/linux"
 }
